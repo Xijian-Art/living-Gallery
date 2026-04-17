@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中式家具展示 | 喜见</title>
+  <meta name="description" content="喜见中式家具展示主页，包含红木家具与中古家具两个板块。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-wine-beige">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo-area">
+        <a href="#" class="logo-link" aria-label="喜见首页">
+            <img src="images/logo.png" alt="喜见Logo" style="height: 50px; width: auto;">
+        </a>
+      </div>
+
+      <nav class="main-nav" aria-label="主页板块导航">
+        <ul class="nav-list">
+          <li><a href="#hongmu" class="nav-link">红木家具</a></li>
+          <li><a href="#vintage" class="nav-link">中古家具</a></li>
+          <li><a href="#case" class="nav-link">家装案例</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div
+          class="hero-banner"
+          id="heroBanner"
+          role="region"
+          aria-roledescription="轮播"
+          aria-label="首页横幅图片"
+        >
+          <div class="hero-banner__viewport">
+            <div class="hero-banner__stage">
+              <div class="hero-banner__track" id="heroBannerTrack"></div>
+            </div>
+            <button type="button" class="hero-banner__arrow hero-banner__arrow--prev" id="heroBannerPrev" aria-label="上一张">‹</button>
+            <button type="button" class="hero-banner__arrow hero-banner__arrow--next" id="heroBannerNext" aria-label="下一张">›</button>
+            <div class="hero-banner__dots" id="heroBannerDots" role="tablist" aria-label="横幅幻灯片"></div>
+          </div>
+        </div>
+        <h1 class="hero-title">喜见艺术空间</h1>
+        <p class="hero-subtitle">
+          领悟雅居之美，感知生活美学
+        </p>
+      </div>
+    </section>
+
+    <section id="hongmu" class="furniture-section">
+      <div class="container">
+        <div class="section-heading">
+          <h2>红木家具</h2>
+          <p>材质温润，纹理细腻，展现传统匠造的沉稳气质。</p>
+        </div>
+
+        <div class="subcategory-groups" data-grid="hongmu"></div>
+      </div>
+    </section>
+
+    <section id="vintage" class="furniture-section section-alt">
+      <div class="container">
+        <div class="section-heading">
+          <h2>中古家具</h2>
+          <p>复古比例与温暖色泽结合，带来更具生活气息的空间氛围。</p>
+        </div>
+
+        <div class="subcategory-groups" data-grid="vintage"></div>
+      </div>
+    </section>
+
+    <section id="case" class="furniture-section">
+      <div class="container">
+        <div class="section-heading">
+          <h2>家装案例</h2>
+          <p>展示整装与定制类项目，方便按场景参考空间方案与落地效果。</p>
+        </div>
+
+        <div class="subcategory-groups" data-grid="case"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 喜见 | 中式家具展示网站</p>
+    </div>
+  </footer>
+
+  <!-- 局部图轮播模态框 -->
+  <div
+    id="detailImageModal"
+    class="detail-modal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="detailModalTitle"
+  >
+    <div class="detail-modal__backdrop" data-detail-modal-close tabindex="-1"></div>
+    <div class="detail-modal__panel">
+      <button type="button" class="detail-modal__close" data-detail-modal-close aria-label="关闭">×</button>
+      <h2 id="detailModalTitle" class="detail-modal__title"></h2>
+      <div class="detail-modal__carousel">
+        <button type="button" class="detail-modal__arrow detail-modal__arrow--prev" id="detailModalPrev" aria-label="上一张局部图">‹</button>
+        <div class="detail-modal__stage">
+          <img id="detailModalImg" class="detail-modal__img" src="" alt="">
+          <p class="detail-modal__counter" id="detailModalCounter" aria-live="polite"></p>
+        </div>
+        <button type="button" class="detail-modal__arrow detail-modal__arrow--next" id="detailModalNext" aria-label="下一张局部图">›</button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="admin-fab"
+    onclick="openAdminPanel()"
+    aria-label="打开管理后台"
+  >
+    管理后台
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
