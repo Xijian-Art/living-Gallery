@@ -219,12 +219,14 @@
     color: var(--color-primary);
     margin-bottom: 16px;
     font-family: "Georgia", "SimSun", serif;
+  text-align: center;
   }
   
   .hero-subtitle {
     font-size: 1rem;
     color: var(--color-text-light);
     letter-spacing: 2px;
+  text-align: center;
   }
   
   /* ========== 家具板块 ========== */
@@ -247,11 +249,13 @@
     color: var(--color-primary);
     margin-bottom: 12px;
     letter-spacing: 2px;
+  text-align: center;
   }
   
   .section-heading p {
     color: var(--color-text-light);
     font-size: 0.95rem;
+  text-align: center;
   }
   
   /* 子科目筛选按钮 */
@@ -289,9 +293,23 @@
   /* 家具网格 */
   .furniture-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 32px;
   }
+
+/* 平板：每行 2 个 */
+@media (max-width: 992px) {
+  .furniture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 手机：每行 2 个 */
+@media (max-width: 767px) {
+  .furniture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
   
   /* 家具卡片 */
   .furniture-card {
@@ -627,6 +645,10 @@
   cursor: pointer;
   transition: var(--transition);
   font-family: inherit;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #adminDetailQueue .admin-upload-preview-item-actions button:hover {
@@ -686,10 +708,10 @@
       font-size: 1.5rem;
     }
   
-    .furniture-grid {
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
+  .furniture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
   
     .subcategory-btn {
       padding: 6px 16px;
@@ -1223,4 +1245,8 @@
   .admin-list-tools-row {
     grid-template-columns: 1fr;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e3c5439935daaef1002e2ee039906ecc48f6d313
