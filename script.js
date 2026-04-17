@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   const STORAGE_KEY = "furniture_store_v2";
   const makePlaceholderItemImage = (title, c1, c2) =>
     `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
