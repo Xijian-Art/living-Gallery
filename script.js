@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const STORAGE_KEY = "furniture_store_v2";
   const makePlaceholderItemImage = (title, c1, c2) =>
     `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
@@ -914,15 +914,11 @@
     return normalized ? `images/${normalized}` : "";
   };
 
-  const createEditNewDetailRowEl = () => {
-    const wrap = document.createElement("div");
-    wrap.className = "admin-detail-upload-row";
-    wrap.innerHTML = `
-      <input type="file" accept="image/*" class="admin-input" data-role="new-detail-file">
-      <button type="button" class="btn-row-inline" data-action="remove-new-detail-row">移除此框</button>
-    `;
-    return wrap;
-  };
+  const parseCommaSeparatedUrls = (raw) =>
+    String(raw || "")
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean);
 
   const renderAddFormDetailQueue = () => {
     const queueRoot = document.querySelector("#adminDetailQueue");
@@ -997,6 +993,10 @@
             </div>
             <div class="admin-grid">
               <div>
+                <label class="admin-label">项目名称</label>
+                <input class="admin-input" type="text" data-role="edit-name" maxlength="50" value="${safeText(item.name)}">
+              </div>
+              <div>
                 <label class="admin-label">大类</label>
                 <select class="admin-select" data-role="edit-category">
                   ${buildCategoryOptionsHtml(item.category)}
@@ -1009,6 +1009,24 @@
                 </select>
               </div>
             </div>
+            <span class="admin-label">当前整体图（可删除后重新上传）</span>
+            <div class="admin-existing-details" data-role="edit-whole-preview">
+              <div class="admin-detail-thumb">
+                <img src="${safeText(item.wholeImage)}" alt="整体图">
+                <button type="button" class="btn-remove-thumb" data-action="remove-whole" aria-label="删除整体图">×</button>
+              </div>
+            </div>
+            <div class="admin-grid">
+              <div>
+                <label class="admin-label">替换整体图（上传）</label>
+                <input class="admin-input" type="file" accept="image/*" data-role="edit-whole-file">
+              </div>
+              <div>
+                <label class="admin-label">替换整体图 URL（可选）</label>
+                <input class="admin-input" type="url" data-role="edit-whole-url" placeholder="https://...">
+              </div>
+            </div>
+            <label class="admin-label">项目描述</label>
             <textarea class="admin-textarea" data-role="desc">${safeText(item.description)}</textarea>
             <span class="admin-label">当前局部图（点击 × 删除单张，立即生效）</span>
             <div class="admin-existing-details">
@@ -1023,9 +1041,16 @@
                 )
                 .join("")}
             </div>
-            <span class="admin-label">新增局部图（上传后点保存此项写入本地）</span>
-            <div class="admin-edit-new-rows"></div>
-            <button type="button" class="btn-add-detail" data-action="add-edit-detail-row" data-id="${safeText(item.id)}">+ 添加局部图上传框</button>
+            <div class="admin-grid">
+              <div>
+                <label class="admin-label">新增局部图（可多选上传）</label>
+                <input class="admin-input" type="file" accept="image/*" data-role="edit-detail-files" multiple>
+              </div>
+              <div>
+                <label class="admin-label">新增局部图 URL（可选，逗号分隔）</label>
+                <input class="admin-input" type="text" data-role="edit-detail-urls" placeholder="https://a.jpg, https://b.jpg">
+              </div>
+            </div>
             <div class="admin-actions">
               <button class="btn-save" type="button" data-action="save">保存此项</button>
               <button class="btn-danger" type="button" data-action="delete">删除项目</button>
@@ -1256,10 +1281,7 @@
       }
 
       let wholeImage = wholeUrl;
-      const detailImages = detailUrl
-        .split(",")
-        .map((url) => url.trim())
-        .filter(Boolean);
+      const detailImages = parseCommaSeparatedUrls(detailUrl);
       const compressionStats = [];
 
       try {
@@ -1422,15 +1444,15 @@
         return;
       }
 
-      if (action === "add-edit-detail-row") {
+      if (action === "remove-whole") {
         const itemRoot = target.closest(".admin-item");
-        const box = itemRoot?.querySelector(".admin-edit-new-rows");
-        if (box) box.appendChild(createEditNewDetailRowEl());
-        return;
-      }
-
-      if (action === "remove-new-detail-row") {
-        target.closest(".admin-detail-upload-row")?.remove();
+        if (!confirm("确定删除当前整体图吗？删除后请在本项中重新上传或填写 URL。")) return;
+        if (!itemRoot) return;
+        itemRoot.setAttribute("data-whole-removed", "1");
+        const preview = itemRoot.querySelector('[data-role="edit-whole-preview"]');
+        if (preview instanceof HTMLElement) {
+          preview.innerHTML = '<p class="admin-item-meta">已删除当前整体图，请上传新图或填写 URL 后点击保存。</p>';
+        }
         return;
       }
 
@@ -1468,7 +1490,12 @@
       }
 
       if (action === "save") {
+        const nameInput = itemRoot.querySelector('[data-role="edit-name"]');
         const textarea = itemRoot.querySelector('[data-role="desc"]');
+        const wholeFileInput = itemRoot.querySelector('[data-role="edit-whole-file"]');
+        const wholeUrlInput = itemRoot.querySelector('[data-role="edit-whole-url"]');
+        const detailFilesInput = itemRoot.querySelector('[data-role="edit-detail-files"]');
+        const detailUrlsInput = itemRoot.querySelector('[data-role="edit-detail-urls"]');
         if (!(textarea instanceof HTMLTextAreaElement)) return;
         const categorySelectEl = itemRoot.querySelector('[data-role="edit-category"]');
         const subcategorySelectEl = itemRoot.querySelector('[data-role="edit-subcategory"]');
@@ -1479,28 +1506,52 @@
           category,
           subcategorySelectEl instanceof HTMLSelectElement ? subcategorySelectEl.value : ""
         );
+        const name = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : "";
         const value = textarea.value.trim();
+        if (!name) {
+          alert("项目名称不能为空。");
+          return;
+        }
         if (!value) {
           alert("描述不能为空。");
           return;
         }
         const base = furnitureItems.find((x) => x.id === id);
-        const existing = base?.detailImages ? [...base.detailImages] : [];
-        const newInputs = itemRoot.querySelectorAll('[data-role="new-detail-file"]');
-        let added = [];
+        if (!base) return;
+        const existingDetails = base.detailImages ? [...base.detailImages] : [];
+        const wholeRemoved = itemRoot.getAttribute("data-whole-removed") === "1";
+        let nextWholeImage = wholeRemoved ? "" : String(base.wholeImage || "").trim();
+        const wholeUrl = wholeUrlInput instanceof HTMLInputElement ? wholeUrlInput.value.trim() : "";
+        const detailUrls = parseCommaSeparatedUrls(
+          detailUrlsInput instanceof HTMLInputElement ? detailUrlsInput.value : ""
+        );
+        const added = [];
         try {
-          for (const inp of newInputs) {
-            if (!(inp instanceof HTMLInputElement)) continue;
-            const file = inp.files?.[0];
-            if (!file) continue;
-            const { dataUrl } = await compressImageToBase64(file);
-            if (dataUrl) added.push(dataUrl);
+          if (wholeUrl) {
+            nextWholeImage = wholeUrl;
+          } else if (wholeFileInput instanceof HTMLInputElement && wholeFileInput.files?.[0]) {
+            const { dataUrl } = await compressImageToBase64(wholeFileInput.files[0]);
+            if (dataUrl) nextWholeImage = dataUrl;
+          }
+          if (detailFilesInput instanceof HTMLInputElement) {
+            const files = Array.from(detailFilesInput.files || []);
+            for (const file of files) {
+              const { dataUrl } = await compressImageToBase64(file);
+              if (dataUrl) added.push(dataUrl);
+            }
+          }
+          for (const url of detailUrls) {
+            added.push(url);
           }
         } catch {
-          alert("新局部图读取失败，请重试。");
+          alert("图片读取失败，请重试。");
           return;
         }
-        const nextDetails = [...existing, ...added];
+        if (!nextWholeImage) {
+          alert("每个项目都必须保留一张整体图，请上传或填写 URL。");
+          return;
+        }
+        const nextDetails = [...existingDetails, ...added];
         if (!nextDetails.length) {
           alert("至少需保留或上传一张局部图。");
           return;
@@ -1512,12 +1563,15 @@
                 category,
                 subcategory,
                 type: category,
+                name,
                 description: value,
+                wholeImage: nextWholeImage,
                 detailImages: nextDetails
               }
             : x
         );
         upsertAndRender();
+        alert("该项目已保存。");
       }
     });
 

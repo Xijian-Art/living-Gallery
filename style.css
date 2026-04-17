@@ -105,7 +105,7 @@ body {
 .hero {
   background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-beige) 100%);
   padding: 40px 0 60px;
-  text-align: center;
+  text-align: left;
 }
 
 .hero-banner {
@@ -214,19 +214,19 @@ body {
 
 .hero-title {
   font-size: 3rem;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 4px;
   color: var(--color-primary);
   margin-bottom: 16px;
-  font-family: "Georgia", "SimSun", serif;
-text-align: center;
+  font-family: "Microsoft YaHei", "SimHei", "PingFang SC", sans-serif;
+  text-align: left;
 }
 
 .hero-subtitle {
   font-size: 1rem;
   color: var(--color-text-light);
   letter-spacing: 2px;
-text-align: center;
+  text-align: left;
 }
 
 /* ========== 家具板块 ========== */
@@ -239,7 +239,7 @@ text-align: center;
 }
 
 .section-heading {
-  text-align: center;
+  text-align: left;
   margin-bottom: 48px;
 }
 
@@ -249,20 +249,20 @@ text-align: center;
   color: var(--color-primary);
   margin-bottom: 12px;
   letter-spacing: 2px;
-text-align: center;
+  text-align: left;
 }
 
 .section-heading p {
   color: var(--color-text-light);
   font-size: 0.95rem;
-text-align: center;
+  text-align: left;
 }
 
 /* 子科目筛选按钮 */
 .subcategory-filter {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 12px;
   margin-bottom: 32px;
 }
@@ -277,6 +277,7 @@ text-align: center;
   cursor: pointer;
   transition: var(--transition);
   font-family: inherit;
+  text-align: left;
 }
 
 .subcategory-btn:hover {
@@ -350,7 +351,7 @@ grid-template-columns: repeat(4, minmax(0, 1fr));
 .image-item figcaption {
   font-size: 0.75rem;
   color: var(--color-text-light);
-  text-align: center;
+  text-align: left;
   padding: 6px 0;
 }
 
@@ -410,17 +411,19 @@ grid-template-columns: repeat(4, minmax(0, 1fr));
   font-weight: 600;
   margin-bottom: 8px;
   color: var(--color-primary-dark);
+  text-align: left;
 }
 
 .card-content p {
   font-size: 0.85rem;
   color: var(--color-text-light);
   line-height: 1.5;
+  text-align: left;
 }
 
 .subcategory-empty {
   grid-column: 1 / -1;
-  text-align: center;
+  text-align: left;
   padding: 48px;
   color: var(--color-text-light);
 }
@@ -759,7 +762,7 @@ cursor: not-allowed;
   }
 
   .detail-strip {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .detail-thumb {
